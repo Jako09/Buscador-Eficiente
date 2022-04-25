@@ -22,32 +22,35 @@ void Discretx(int N, double hf, double xmin, double R[], int Rd[]){//In this cas
 		}
 }
 void Densidad0Eff(int N,double xmax, double xmin, double m[], double R[], int Rd[], double hf, double D[]){
-	Discretx(N, hf, xmin, R, Rd);//With this function, we obtain the posi
+	int h_hash=hf;//Only for this case
+	Discretx(N, h_hash, xmin, R, Rd);//With this function, we obtain the position in discret coordinates
 	//define the index max for the
-	int H_x=int((xmax-xmin)/hf);
+	int H_x=int((xmax-xmin)/h_hash);//We define the max value for discret position. This is only for the hf=h_hash
 	//Define the key value
-	int key[N], keyS[N], idx[N];
+	int key[N], keyS[N], idx[N]; //Define the key array and the key sort array and the array with the permuted index
 	for(int i=0; i<N;i++){
-		key[i]=Rd[i];
+		key[i]=Rd[i]; //Here define the value of key for each particle
 	}
 	//We need 4 arrays:
 	// 1.- Index original for particles idx[]
 	// 2.- New Index for sort keys: Keys[i]: i-> is the New Index
 	// 3.-
-	RadixSPH(N,key,keyS, idx);
-	int nclass=keyS[N-1];
+	RadixSPH(N,key,keyS, idx); //Ordered the values of the Key and give value for the permuted index, with the noral index is the original index, so for
+	// the array idx[i] provide the number of the particle (original): idx[i] and i is the permuted index where the key is ordered.
+	int nclass=H_x;//In this case 1D is the same that the H_x
 	// Define the classes
 	int idxmin[nclass], idxmax[nclass]; // the number of the class is in the index of this arrays
-	bool act[nclass];
-	idxmax[0]=0;
+	bool act[nclass]; //This array only say us if the cell is ocuped or not
 	int count=0; // counter to
 	for(int i=0; i<nclass; i++){
+		act[i]=false;
 		for(int j=0; j<N;j++){
 			if(keyS[j]==i){
+				act[i]=true;//if the cell have some particle, this is the line that considered
 				if(i==0){
 					idxmin[i]=0;
 				}else{
-					idxmin[i]=idxmax[i-1];
+					idxmin[i]=idxmax[i-1]+1; //In here we determine the min and max index of the particles than are inside of the cells
 				}
 				count++;
 			}
