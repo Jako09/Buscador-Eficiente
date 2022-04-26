@@ -1,17 +1,18 @@
 
 #include"Kernel.h"
+#include"radix.h"
 #define a 5.0
 #define x0 5.0
 
 using namespace std;
 
 //Obtención de las densidades de cada una de las partículas en el método SPH, donde será necesario la posción para evaluar el kernel, el parámetro de suavizado para definir el kernel y un arreglo donde se guardaran los valores de la densidad, el número de iperaciones es de orden N^2.
-void Densidad0(int N, double m[], double R[], double h[], double D[]){
+void Densidad0(int N, double m[], double R[], double h, double D[]){
   
 	for(int i=0; i<N; i++){
 		D[i]=0.0;
 		for(int j=0; j<N; j++){
-			D[i]+=m[j]*ker(h[i], R[i], R[j]);
+			D[i]+=m[j]*ker(h, R[i], R[j]);
 			} 
 		}
 	}
@@ -21,7 +22,8 @@ void Discretx(int N, double hf, double xmin, double R[], int Rd[]){//In this cas
 			Rd[i]=int((R[i]-xmin)/hf);
 		}
 }
-void Densidad0Eff(int N,double xmax, double xmin, double m[], double R[], int Rd[], double hf, double D[]){
+void Densidad0Eff(int N,double xmax, double xmin, double m[], double R[], double hf, double D[]){
+	int Rd[N];
 	int h_hash=hf;//Only for this case
 	Discretx(N, h_hash, xmin, R, Rd);//With this function, we obtain the position in discret coordinates
 	//define the index max for the
@@ -37,36 +39,36 @@ void Densidad0Eff(int N,double xmax, double xmin, double m[], double R[], int Rd
 	// 3.-
 	RadixSPH(N,key,keyS, idx); //Ordered the values of the Key and give value for the permuted index, with the noral index is the original index, so for
 	// the array idx[i] provide the number of the particle (original): idx[i] and i is the permuted index where the key is ordered.
-	int nclass=H_x;//In this case 1D is the same that the H_x
+	int nclass=H_x;//The number of classes in this case 1D is the same that the H_x
 	// Define the classes
 	int idxmin[nclass], idxmax[nclass]; // the number of the class is in the index of this arrays
 	bool act[nclass]; //This array only say us if the cell is ocuped or not
-	int count=0; // counter to
+	int count=-1;
 	for(int i=0; i<nclass; i++){
 		act[i]=false;
+		idxmax[i]=-1;
+		idxmin[i]=-1;
 		for(int j=0; j<N;j++){
 			if(keyS[j]==i){
-				act[i]=true;//if the cell have some particle, this is the line that considered
 				if(i==0){
 					idxmin[i]=0;
 				}else{
-					idxmin[i]=idxmax[i-1]+1; //In here we determine the min and max index of the particles than are inside of the cells
+					idxmin[i]=count; //In here we determine the min and max index of the particles than are inside of the cells
 				}
+				act[i]=true;//if the cell have some particle, this is the line that considered
 				count++;
 			}
+		}
+		if(act[i]){
 			idxmax[i]=count;
 		}
 	}
 	//Now apply the efficient search
 	for(int i=0; i<N; i++){
-		D[i]=0.0;
-		// i is the original index, for each particle we calculate the density
-		//we need the key, after use the key for establish the neight cells with key[+1,-1,i]
-		//with the key we can choose the intervals
-		for(int j=idxmin[keyS[i]]; j=<idxmax[keyS[i]]; j++){ //j is the permuted index
-			//we need to return to the original index
-
-			D[i]+=m[j]*dker(h[i], R[i], R[j]);
+		D[i]=0.0; // i is the permuted index, for each particle we calculate the density
+		//If we know the permuted index, we can search the cell by the key and search
+		for(int j=idxmin[keyS[i-1]]; j<idxmax[keyS[i+1]]; j++){
+			D[i]+=m[j]*ker(hf, R[i], R[j]);
 		}
 	}
 }
