@@ -17,6 +17,7 @@ int getMax(int arr[], int size)
 void CountingSort(int arr[],int idx[], int size, int div)
 {
     int output[size];
+    int idxout[size];
     int count[10] = {0};
 
     for (int i = 0; i < size; i++)
@@ -25,31 +26,33 @@ void CountingSort(int arr[],int idx[], int size, int div)
     for (int i = 1; i < 10; i++)
         count[i] += count[i - 1];
 
-    for (int i = size - 1; i >= 0; i--)
-    {
-        output[count[ (arr[i]/div)%10 ] - 1] = arr[i];
-        idx[count[ (arr[i]/div)%10 ] - 1]=i;
-        count[ (arr[i]/div)%10 ]--;
+    for (int i = size - 1; i >= 0; i--){
+        output[count[ (arr[i]/div)%10] - 1] = arr[i];
+        idxout[count[ (arr[i]/div)%10] - 1] = idx[i];
+        count[(arr[i]/div)%10]--;
     }
 
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < size; i++){
         arr[i] = output[i];
+        idx[i] = idxout[i];
+    }
 }
 
 
 void RadixSort(int arr[],int idx[], int size)
 {
     int m = getMax(arr, size);
-    for (int div = 1; m/div > 0; div *= 10)
-        CountingSort(arr, idx, size, div);
+    for (int div = 1; m/div > 0; div *= 10){
+            CountingSort(arr,idx, size, div);
+    }
 }
 
 
-void RadixSPH(int N,int key[], int keyS[], int idx[]){
-    for(int i; i<N; i++){
-        key[i]=keyS[i];
+void RadixSPH(int N,int key[], int keyS[],int idx[]){
+    for(int i=0; i<N; i++){
+        keyS[i]=key[i];
     }
-	RadixSort(keyS,idx, N);
+	RadixSort(keyS, idx, N);
 }
 
 
