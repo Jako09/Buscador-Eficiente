@@ -45,11 +45,29 @@ void Densidad0Eff(int N,double xmax, double xmin, double m[], double R[], double
 	// the array idx[i] provide the number of the particle (original): idx[i] and i is the permuted index where the key is ordered.
 	int nclass=H_x;//The number of classes in this case 1D is the same that the H_x
 	// Define the classes
+	//POdemos hacer mass eficiente partiendo de un loop sobre todas las particulas e ir revisando cada cuando cambia un escalon
+	int idxmin[nclass]={-1}, idxmax[nclass]={-1}; // the number of the class is in the index of this arrays
+	bool act[nclass]={false}; //This array only say us if the cell is ocuped or not
+	int numclass;
+	numclass=keyS[0];
+	act[numclass]=true;
+	idxmin[numclass]=0;
+	idxmax[numclass]=0;
+	for(int i=1; i<N; i++){
+		if(keyS[i]!=numclass){
+			idxmax[numclass]=i-1;
+			numclass=keyS[i];
+			act[numclass]=true;
+			idxmin[numclass]=i;
+			idxmax[numclass]=i;
+		}
+	}
+	/*
 	int idxmin[nclass], idxmax[nclass]; // the number of the class is in the index of this arrays
 	bool act[nclass]; //This array only say us if the cell is ocuped or not
 	int countmax=0;
 	int countmin=0;
-	for(int i=0; i<nclass; i++){
+	for(int i=0; i<nclass; i++){//Orden O(nclass*N), debe se ser nclass<<N
 		act[i]=false;
 		idxmax[i]=-1;
 		idxmin[i]=-1;
@@ -68,6 +86,7 @@ void Densidad0Eff(int N,double xmax, double xmin, double m[], double R[], double
 		}
 //		printf("La clase %d tiene como valor idxmin %d y idxmax %d, con ocupación de la celda %d \n",i,idxmin[i],idxmax[i],act[i]);
 	}
+	*/
 	//Now apply the efficient search
 	for(int i=0; i<N; i++){
 		D[idx[i]]=0.0; // i is the permuted index, for each particle we calculate the density

@@ -66,7 +66,7 @@ void grid(int Ptype, int N, double m[], double R[]){
 	}
 //Se obtiene la masa parcial para cada una de las partículas
 	mparcial=sum/((double)N);
-	cout << mparcial << '\n';
+//	cout << mparcial << '\n';
 	int ia=0;
 //Se suman las masas comenzando del primer paralelogramo, susecivamente hasta llegar a un valor	mparcial, y se detiene el contador ia, que nos dice en que nodo del grid estamos, en donde se logró detener, usamos el valor ai para hallar  la posción en donde se va colocar la partícula.
 	for(int i=0; i<N; i++){

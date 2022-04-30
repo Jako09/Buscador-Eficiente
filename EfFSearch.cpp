@@ -14,9 +14,10 @@ int main(){
     int Ptype=2; // Type Problem, 1.- is for partilce in a box; 2.- is for Harmonic Oscillator
     int N, N_itn;
     int t, tEff; // for time
-//    printf("¿Cuántas iteraciones deseas realizar? Comenzamos desde 100 y las iteraciones van en multiplos de 100 \n");
-//    cin >> N_itn;
-    N_itn=5;
+    printf("¿Cuántas iteraciones deseas realizar? Comenzamos desde 100 y las iteraciones van en multiplos de 100 \n");
+    cin >> N_itn;
+    printf("Introduce el valor inicial del número de partículas N \n");
+    cin >> N;
     using std::chrono::high_resolution_clock;
     using std::chrono::duration_cast;
     using std::chrono::microseconds;
@@ -26,7 +27,7 @@ int main(){
     ofstream file("Efftime.xxx");
     // First we need to know the position of the variables, so we call any function to initialize the distribution of the particles
     for(int i=1; i<N_itn;i++){
-        N=i*100;
+        N+=100;
         double m[N], R[N], D[N], DEff[N];
         grid(Ptype, N, m, R);
         h=200.0/(double)N;
@@ -41,7 +42,8 @@ int main(){
         auto durationEff = duration_cast<microseconds>(stopEff - startEff);
         tEff=durationEff.count(); //time in microseconds
         //-------------This is for time vs #particles print
-        file << t << " " << tEff << " " << N << '\n';
+        file << N << " " << t << " " << tEff << '\n';
+        cout << i << '\n';
         //-------------This is for density print
 //        printf("The time duration for the standar search (N^2) it was: %d μs, and for the Efficient Search, the time was: %d μs \n",t, tEff);
 //        ofstream file1("Densidad1.xxx");
