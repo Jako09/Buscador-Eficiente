@@ -13,18 +13,12 @@ void Densidad0(int N, double m[], double R[], double h, double D[]){
 		D[i]=0.0;
 		for(int j=0; j<N; j++){
 			D[i]+=m[j]*ker(h, R[i], R[j]);
-			} 
-		}
+		} 
 	}
-	//We define the four steps like a function, so
-void Discretx(int N, double h_hash, double xmin, double R[], int Rd[]){//In this case we use the h_hash same like h_smoothing lenght
-		for(int i=0; i<N;i++){
-			Rd[i]=0;
-			Rd[i]=int((R[i]-xmin)/h_hash);
-//			cout << "Para la particula "<< i <<" la posicion continua es " << R[i] << ", la posicion discreta es " << Rd[i] << "\n";
-		}
 }
-void Densidad0Eff(int N,double xmax, double xmin, double m[], double R[], double hf, double D[]){
+	//We define the four steps like a function, so
+
+void Densidad0Eff(int N,double xmax, double xmin, int xf, double m[], double R[], double hf, double D[]){
 	int Rd[N];
 	double h_hash=2*hf;//Only for this case
 	Discretx(N, h_hash, xmin, R, Rd);//With this function, we obtain the position in discret coordinates
@@ -38,7 +32,7 @@ void Densidad0Eff(int N,double xmax, double xmin, double m[], double R[], double
 	}
 	//We need 4 arrays:
 	// 1.- Index original for particles idx[]
-	// 2.- New Index for sort keys: Keys[i]: i-> is the New Index
+	// 2.- New Index for sort keyS: KeyS[i]: i-> is the New Index
 	// 3.-
 	RadixSPH(N,key,keyS,idx); //Ordered the values of the Key and give value for the permuted index, with the noral index is the original index, so for
 	
@@ -46,68 +40,59 @@ void Densidad0Eff(int N,double xmax, double xmin, double m[], double R[], double
 	int nclass=H_x;//The number of classes in this case 1D is the same that the H_x
 	// Define the classes
 	//POdemos hacer mass eficiente partiendo de un loop sobre todas las particulas e ir revisando cada cuando cambia un escalon
-	int idxmin[nclass]={-1}, idxmax[nclass]={-1}; // the number of the class is in the index of this arrays
+	int idxmin[nclass]={}, idxmax[nclass]={}; // the number of the class is in the index of this arrays
 	bool act[nclass]={false}; //This array only say us if the cell is ocuped or not
 	int numclass;
 	numclass=keyS[0];
 	act[numclass]=true;
 	idxmin[numclass]=0;
-	idxmax[numclass]=0;
 	for(int i=1; i<N; i++){
 		if(keyS[i]!=numclass){
 			idxmax[numclass]=i-1;
 			numclass=keyS[i];
 			act[numclass]=true;
 			idxmin[numclass]=i;
-			idxmax[numclass]=i;
 		}
 	}
-	/*
-	int idxmin[nclass], idxmax[nclass]; // the number of the class is in the index of this arrays
-	bool act[nclass]; //This array only say us if the cell is ocuped or not
-	int countmax=0;
-	int countmin=0;
-	for(int i=0; i<nclass; i++){//Orden O(nclass*N), debe se ser nclass<<N
-		act[i]=false;
-		idxmax[i]=-1;
-		idxmin[i]=-1;
-		for(int j=0; j<N;j++){
-			if(keyS[j]==i && act[i]==false){
-				act[i]=true;
-				idxmin[i]=countmin;
-			}
-			if(keyS[j]==i && act[i]==true){
-				countmax++;
-			}
-		}
-		if(act[i]==true){
-			idxmax[i]=countmax;
-			countmin=++countmax;
-		}
-//		printf("La clase %d tiene como valor idxmin %d y idxmax %d, con ocupación de la celda %d \n",i,idxmin[i],idxmax[i],act[i]);
-	}
-	*/
-	//Now apply the efficient search
+	idxmax[numclass]=N-1;
 	for(int i=0; i<N; i++){
-		D[idx[i]]=0.0; // i is the permuted index, for each particle we calculate the density
-		//If we know the permuted index, we can search the cell by the key and search
-		if(keyS[i]==0 || keyS[i]==H_x){
-			if(keyS[i]==0){
-				for(int j=idxmin[keyS[i]]; j<idxmax[keyS[i]+1]; j++){
-					D[idx[i]]+=m[idx[i]]*ker(hf, R[idx[i]], R[idx[j]]);
+		printf("%d key sort: %d \n",i, keyS[i]);
+	}
+	
+	for(int i=0; i<N; i++){
+		D[idx[i]]=0.0;
+		for(int nclass2=keyS[i]-xf;nclass2<=keyS[i]+xf;nclass2++){
+			printf("El indice es %d, el KeyS: %d, entonces la nclass2 es %d \n",i, keyS[i], nclass2);
+			if(act[nclass2]=true){
+				for(int j=idxmin[nclass2]; j<=idxmax[nclass2];j++){
+					D[idx[i]]+=m[idx[j]]*ker(hf, R[idx[i]], R[idx[j]]);
 				}
-			}
-			if(keyS[i]==H_x){
-				for(int j=idxmin[keyS[i]-1]; j<idxmax[keyS[i]]; j++){
-					D[idx[i]]+=m[idx[i]]*ker(hf, R[idx[i]], R[idx[j]]);
-				}
-			}
-		}else{
-			for(int j=idxmin[keyS[i]-1]; j<idxmax[keyS[i]+1]; j++){	
-				D[idx[i]]+=m[idx[i]]*ker(hf, R[idx[i]], R[idx[j]]);
 			}
 		}
 	}
+	
+/*
+	for(int i=0; i<N; i++){
+			D[idx[i]]=0.0; // i is the permuted index, for each particle we calculate the density
+			//If we know the permuted index, we can search the cell by the key and search
+			if(keyS[i]==0 || keyS[i]==H_x){
+				if(keyS[i]==0){
+					for(int j=idxmin[keyS[i]]; j<idxmax[keyS[i]+1]; j++){
+						D[idx[i]]+=m[idx[i]]*ker(hf, R[idx[i]], R[idx[j]]);
+					}
+				}
+				if(keyS[i]==H_x){
+					for(int j=idxmin[keyS[i]-1]; j<idxmax[keyS[i]]; j++){
+						D[idx[i]]+=m[idx[i]]*ker(hf, R[idx[i]], R[idx[j]]);
+					}
+				}
+			}else{
+				for(int j=idxmin[keyS[i]-1]; j<idxmax[keyS[i]+1]; j++){	
+					D[idx[i]]+=m[idx[i]]*ker(hf, R[idx[i]], R[idx[j]]);
+				}
+			}
+	}
+*/
 }
 //La derivada de la densidad se obtiene a través de la masa de cada una de las partículas como factor que multiplica la derivada del kernel y una constante q, aunque se puede omitir el factor q, como segunda discretización.
 void Densidad1(int N, double m[], double R[], double h[], double D[], double Dx[]){

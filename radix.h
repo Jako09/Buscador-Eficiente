@@ -54,5 +54,13 @@ void RadixSPH(int N,int key[], int keyS[],int idx[]){
 	RadixSort(keyS, idx, N);
 }
 
+void Discretx(int N, double h_hash, double xmin, double R[], int Rd[]){//In this case we use the h_hash same like h_smoothing lenght
+		for(int i=0; i<N;i++){
+			Rd[i]=0;
+			Rd[i]=int((R[i]-xmin)/h_hash);
+//			cout << "Para la particula "<< i <<" la posicion continua es " << R[i] << ", la posicion discreta es " << Rd[i] << "\n";
+		}
+}
+
 
 
