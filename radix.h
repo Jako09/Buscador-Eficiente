@@ -62,8 +62,6 @@ void Discretx(int N, double h_hash, double xmin, double R[], int Rd[]){//In this
 		}
 }
 
-<<<<<<< HEAD
-=======
 void CensoSPH(int N, double h_hash, double xmin, double R[], int keyS[], int idx[], int idxmin[], int idxmax[], int act[]){
     int Rd[N]={};
 	Discretx(N, h_hash, xmin, R, Rd);//With this function, we obtain the position in discret coordinates
@@ -105,6 +103,5 @@ void CensoSPH(int N, double h_hash, double xmin, double R[], int keyS[], int idx
 	}
 }
 
->>>>>>> d98adde (Ya funciona)
 
 

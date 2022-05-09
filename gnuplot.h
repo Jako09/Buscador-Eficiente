@@ -25,15 +25,9 @@ void printGraphtimeEff(string format){
     file.close();
 }
 
-<<<<<<< HEAD
-void printGraphDensity(string format, int iterations){
-    ofstream file("densidadEff.gnu");
-    file << "set term windows" << '\n';
-=======
 void printGraphDensity(string format, int iterations, string term){
     ofstream file("densidadEff.gnu");
     file << "set term "+term << '\n';
->>>>>>> d98adde (Ya funciona)
     file << "set grid" << '\n';
     file << "set title 'Posicion vs Densidad'" << '\n';
     file << "set ylabel '{/Symbol r}(r):=Densidad'" << '\n';
@@ -41,10 +35,6 @@ void printGraphDensity(string format, int iterations, string term){
     file << "n="+to_string(iterations) << '\n';
     file << "do for [it=0:n]{" << '\n';
     file << "p 'Densidad.dat' i it u ($1):($2) lt 1 t 'Estandar','' i it u ($1):($3) lt 2 t 'Eficiente' "<< '\n';
-<<<<<<< HEAD
-    file << "pause 0.5" << '\n';
-=======
     file << "pause 1" << '\n';
->>>>>>> d98adde (Ya funciona)
     file << "}" << '\n';
 }

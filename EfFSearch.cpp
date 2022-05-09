@@ -14,40 +14,27 @@ int main(){
     int Ptype=2; // Type Problem, 1.- is for partilce in a box; 2.- is for Harmonic Oscillator
     int N, N_itn, nclass, xf;
     int t, tEff; // for time
-<<<<<<< HEAD
-    string formatimage;
-=======
     string formatimage, term;
->>>>>>> d98adde (Ya funciona)
     printf("¿Cuántas iteraciones deseas realizar? Comenzamos desde 100 y las iteraciones van en multiplos de 100 \n");
     cin >> N_itn;
     printf("Introduce el valor inicial del número de partículas N \n");
     cin >> N;
-<<<<<<< HEAD
-    printf("¿Qué tipo de archivo de salida deseas? \nEPS\tPNG, escribe la terminación en mayusculas \n");
-    cin >> formatimage;
-=======
     printf("¿Qué tipo de archivo de salida deseas? \n EPS\t ó \tPNG, escribe la terminación en mayusculas \n");
     cin >> formatimage;
     printf("¿Qué sistema operativo usas?\n Si es windows, escribe 'windows'\n Si es linux, escribe 'x11'\n");
     cin >> term;
->>>>>>> d98adde (Ya funciona)
     using std::chrono::high_resolution_clock;
     using std::chrono::duration_cast;
     using std::chrono::microseconds;
     double h, h_hash, xmin, xmax;
     xmax=4.0;
     xmin=-4.0;
-<<<<<<< HEAD
-    int xf=1;
-=======
     xf=1;
     //here will be the function to calculate the xf, where xf is number of neight cells that will check for each particle
->>>>>>> d98adde (Ya funciona)
     ofstream file("Efftime.dat");
     ofstream file1("Densidad.dat");
     // First we need to know the position of the variables, so we call any function to initialize the distribution of the particles
-//    for(int i=1; i<N_itn;i++){
+    for(int i=1; i<N_itn;i++){
         N+=100;
         double m[N]={}, R[N]={}, D[N]={}, DEff[N]={};
         int keyS[N]={}, idx[N]={};
@@ -63,34 +50,19 @@ int main(){
         auto duration = duration_cast<microseconds>(stop - start);
         t=duration.count(); //time in microseconds
         auto startEff = high_resolution_clock::now();
-<<<<<<< HEAD
-        Densidad0Eff( N, xmax,  xmin,xf, m, R, h,  DEff);
-=======
         CensoSPH(N, h_hash, xmin, R, keyS, idx, idxmin,  idxmax, act);
         Densidad0Eff( N,nclass, xf, m, R, h,  DEff, keyS,idx, idxmin, idxmax, act);
->>>>>>> d98adde (Ya funciona)
         auto stopEff = high_resolution_clock::now();
         auto durationEff = duration_cast<microseconds>(stopEff - startEff);
         tEff=durationEff.count(); //time in microseconds
         //-------------This is for time vs #particles print
         file << N << " " << t << " " << tEff << '\n';
-<<<<<<< HEAD
-//        cout << i << '\n';
-=======
->>>>>>> d98adde (Ya funciona)
+
         //-------------This is for density print
         file1 << "\n\n\n";
         for(int i=0; i<N; i++){
             file1 << R[i] << "\t" << D[i] << "\t" <<  DEff[i] << "\n";
         }
-<<<<<<< HEAD
-        
-//    }
-    printGraphDensity(formatimage, N_itn);
-    printGraphtimeEff(formatimage);
-    file.close();
-    file1.close();   
-=======
         printf("iteracion %d \n ", i);
 
     }
@@ -99,6 +71,5 @@ int main(){
     file.close();
     file1.close();
     cout << "The process finished" << '\n';
->>>>>>> d98adde (Ya funciona)
     return 0;
 }
