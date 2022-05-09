@@ -15,6 +15,7 @@ void Densidad0(int N, double m[], double R[], double h, double D[]){
 			D[i]+=m[j]*ker(h, R[i], R[j]);
 		} 
 	}
+<<<<<<< HEAD
 }
 	//We define the four steps like a function, so
 
@@ -66,9 +67,61 @@ void Densidad0Eff(int N,double xmax, double xmin, int xf, double m[], double R[]
 			if(act[nclass2]=true){
 				for(int j=idxmin[nclass2]; j<=idxmax[nclass2];j++){
 					D[idx[i]]+=m[idx[j]]*ker(hf, R[idx[i]], R[idx[j]]);
+=======
+	//We define the four steps like a function, so
+
+void Densidad0Eff(int N,int nclass, int xf, double m[], double R[], double h, double D[], int keyS[], int idx[], int idxmin[], int idxmax[], int act[]){
+	for(int i=0; i<N; i++){
+		D[idx[i]]=0.0;
+//		printf("keyS: %d, R: %lf, idx: %d, xf %d \n", keyS[i], R[i], idx[i], xf);
+		if(keyS[i]-xf<0 || keyS[i]+xf>nclass){
+			int diff, nxf;
+			if(keyS[i]-xf<0){
+				diff=keyS[i]-xf;
+				while(diff<0){
+					diff++;
+>>>>>>> d98adde (Ya funciona)
+				}
+				nxf=xf-diff;
+				for(int nclass2=keyS[i]-nxf;nclass2<=keyS[i]+xf;nclass2++){
+					if(act[nclass2]==1){
+						for(int j=idxmin[nclass2]; j<=idxmax[nclass2];j++){
+							D[idx[i]]+=m[idx[j]]*ker(h, R[idx[i]], R[idx[j]]);
+						}
+					}
+				}
+
+			}
+<<<<<<< HEAD
+=======
+			if(keyS[i]+xf>nclass){
+				diff=keyS[i]+xf;
+				while(diff>nclass){
+					diff--;
+				}
+				nxf=xf-diff;
+				for(int nclass2=keyS[i]-xf;nclass2<=keyS[i]+nxf;nclass2++){
+					if(act[nclass2]==1){
+						for(int j=idxmin[nclass2]; j<=idxmax[nclass2];j++){
+							D[idx[i]]+=m[idx[j]]*ker(h, R[idx[i]], R[idx[j]]);
+						}
+					}
 				}
 			}
+		}else{
+			for(int nclass2=keyS[i]-xf;nclass2<=keyS[i]+xf;nclass2++){
+				if(act[nclass2]==1){
+					for(int j=idxmin[nclass2]; j<=idxmax[nclass2];j++){
+						D[idx[i]]+=m[idx[j]]*ker(h, R[idx[i]], R[idx[j]]);
+					}
+				}
+			}
+>>>>>>> d98adde (Ya funciona)
 		}
+
+	}
+	for(int j=0; j<nclass; j++){
+//		printf("act %d, idxmin %d, idxmax %d, nclass %d \n",act[j],idxmin[j],idxmax[j], j);
 	}
 	
 /*
